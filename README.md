@@ -18,3 +18,5 @@ git commit -m "Add Symantec-SESC.tgz via LFS"
 git push origin main
 
 N.B - Once it’s inside the repo, Git LFS will handle it correctly — no need to keep it elsewhere
+
+# Install all required packages for new builds
