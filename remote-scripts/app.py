@@ -1,8 +1,8 @@
 import asyncio
 import os
 import shlex
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
-from fastapi.responses import HTMLResponse
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect # type: ignore
+from fastapi.responses import HTMLResponse # type: ignore
 
 app = FastAPI()
 
