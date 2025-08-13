@@ -1,0 +1,73 @@
+import asyncio
+import pexpect
+from fastapi import FastAPI, WebSocket
+from fastapi.responses import HTMLResponse
+
+app = FastAPI()
+
+html = """
+<!DOCTYPE html>
+<html>
+<head><title>Bash Runner</title></head>
+<body>
+<pre id="output" style="height:400px; overflow-y:scroll; background:black; color:white; padding:10px;"></pre>
+<input id="input" autocomplete="off" placeholder="Type input and press Enter" style="width:100%; padding:8px; background:#222; color:white; border:none;">
+<script>
+const output = document.getElementById('output');
+const input = document.getElementById('input');
+const ws = new WebSocket(`ws://${location.host}/ws`);
+
+ws.onmessage = (event) => {
+  output.textContent += event.data;
+  output.scrollTop = output.scrollHeight;
+};
+
+input.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    ws.send(input.value + "\\n");
+    input.value = '';
+  }
+});
+</script>
+</body>
+</html>
+"""
+
+@app.get("/")
+async def get():
+    return HTMLResponse(html)
+
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+
+    child = pexpect.spawn("/apps/remote-scripts/back/run-remote-script-plink.sh", encoding='utf-8')
+
+    loop = asyncio.get_event_loop()
+
+    async def read_output():
+        while True:
+            try:
+                # Read whatever output is ready (up to 1024 bytes), non-blocking with short timeout
+                output = await loop.run_in_executor(None, lambda: child.read_nonblocking(size=1024, timeout=0.1))
+                if output:
+                    await websocket.send_text(output)
+                else:
+                    await asyncio.sleep(0.1)  # avoid busy loop if no output
+            except pexpect.exceptions.TIMEOUT:
+                # No data available right now, just wait a bit
+                await asyncio.sleep(0.1)
+            except pexpect.EOF:
+                break
+
+    read_task = asyncio.create_task(read_output())
+
+    try:
+        while True:
+            data = await websocket.receive_text()
+            child.sendline(data.rstrip())
+    except Exception:
+        pass
+    finally:
+        read_task.cancel()
+        child.close()

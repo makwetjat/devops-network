@@ -1,0 +1,48 @@
+#!/bin/bash
+#
+#  README
+#  When installing a package... Both questions must yes.
+#  Every package has it's own remote script for installation
+#  When only runnning a remote script, no and yes.
+#
+# Check if all required arguments are provided
+REMOTE_PATH="/apps/remote-scripts"
+echo "ABOUBT TO RUN SCRIPT ON REMOTE SERVERS"
+echo "--------------------------------------"
+
+# Server List
+echo ""
+echo "Please paste a list of remote servers"
+source $REMOTE_PATH/back/variables/create-server-list.sh
+#echo ""
+SERVER_LIST="$REMOTE_PATH/remote-servers/server_list.txt"
+# Read the server list into an array
+mapfile -t servers < $SERVER_LIST
+
+echo "----------------------------------------"
+# Choose user to execute with
+export REMOTE_PATH="/apps/remote-scripts"
+source $REMOTE_PATH/back/select-run-user.sh
+source $RUN_USER
+echo "--------------------------------------------"
+echo ""
+read -p "Are you sure you want to run remote script? (yes/no): " remote_script
+echo "-----------------------------------------------------------------"
+echo "Choose script to execute: Your choice should be the script number"
+echo "-----------------------------------------------------------------"
+    
+if [[ "$remote_script" == "yes" ]]; then
+     echo "------------------------------------------------"
+     source $REMOTE_PATH/back/select-remote-script.sh
+     SCRIPT_NAME=$(basename "$COMMAND_SCRIPT")
+     echo "Running remote script..."
+     # Add remote script execution commands here
+     for host in "${servers[@]}"; do
+             echo "Processing $host..."
+	     sshpass -p "$REMOTE_PASS" scp "$COMMAND_SCRIPT" "$REMOTE_USER@$host:/tmp/$SCRIPT_NAME"
+	     sshpass -p "$REMOTE_PASS" ssh "$REMOTE_USER@$host" "sudo bash /tmp/$SCRIPT_NAME; rm -f /tmp/$SCRIPT_NAME"
+     done
+else
+        echo "Skipping remote script execution"
+fi
+
