@@ -1,10 +1,15 @@
 # Install Apache & mod_wsgi
 ~] sudo dnf install httpd python3-mod_wsgi
 ~] sudo dnf install git
+~] sudo dnf install sshpass
 # Add app user
 useradd configiwave
-#Create your app directory
+# Create app directory and clone repo
 sudo mkdir -p /app/
-sudo chown -R configiwave:configiwave /app/
-ln -s /app/remote-scripts/automatio-ui /var/www/automatio-ui
-
+cd /app
+git clone https://github.com/makwetjat/devops-network.git
+cd /app/devops-network/automation-ui
+python3 -m venv venv       # ✅ creates the virtual environment folder named 'venv'
+source venv/bin/activate   # ✅ activates it
+sudo chown -R configiwave:configiwave /app
+ln -s /app/devops-network/automation-ui /var/www/automation-ui
