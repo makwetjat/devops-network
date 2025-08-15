@@ -1,5 +1,4 @@
-# Install Apache & mod_wsgi
-~] sudo dnf install httpd python3-mod_wsgi
+# Installations
 ~] sudo  dnf install python3
 ~] sudo dnf install git
 ~] sudo dnf install sshpass
@@ -16,10 +15,28 @@ source venv/bin/activate   # ✅ activates
 pip install -r requirements.txt
 pip install --upgrade pip
 #
-ln -s /app/devops-network/automation-ui /var/www/automation-ui
-cp -p /app/devops-network/configs/automation-ui.conf /etc/httpd/conf.d/automation-ui.conf
-# Ensure Apache is enabled and running
-sudo systemctl enable httpd
-sudo systemctl start httpd
-sudo systemctl status httpd
 sudo chown -R configiwave:configiwave /app
+
+# Create a services file - /etc/systemd/system/automation-ui.service
+
+[Unit]
+Description=Automation UI FastAPI Service
+After=network.target
+
+[Service]
+User=configiwave
+Group=configiwave
+WorkingDirectory=/app/devops-network/automation-ui
+Environment="PATH=/app/devops-network/automation-ui/venv/bin"
+ExecStart=/app/devops-network/automation-ui/venv/bin/uvicorn app:app --host 0.0.0.0 --port 8000
+
+[Install]
+WantedBy=multi-user.target
+
+# Give the user rights to run the service
+echo 'configwave ALL=NOPASSWD:/bin/systemctl *  automation-ui*'|tee /etc/sudoers.d/configwave
+
+# Start and enable the service s
+systemctl enable automation-ui.service
+systemctl start automation-ui.service
+systemctl status automation-ui.service
