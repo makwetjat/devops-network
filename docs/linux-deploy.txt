@@ -1,5 +1,6 @@
 # Install Apache & mod_wsgi
 ~] sudo dnf install httpd python3-mod_wsgi
+~] sudo  dnf install python3
 ~] sudo dnf install git
 ~] sudo dnf install sshpass
 # Add app user
@@ -13,6 +14,7 @@ cd /app/devops-network/automation-ui
 python3 -m venv venv       # ✅ creates the virtual environment folder named 'venv'
 source venv/bin/activate   # ✅ activates 
 pip install -r requirements.txt
+pip install --upgrade pip
 #
 ln -s /app/devops-network/automation-ui /var/www/automation-ui
 cp -p /app/devops-network/configs/automation-ui.conf /etc/httpd/conf.d/automation-ui.conf
