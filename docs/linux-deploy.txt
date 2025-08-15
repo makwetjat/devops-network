@@ -1,0 +1,10 @@
+# Install Apache & mod_wsgi
+~] sudo dnf install httpd python3-mod_wsgi
+~] sudo dnf install git
+# Add app user
+useradd configiwave
+#Create your app directory
+sudo mkdir -p /app/
+sudo chown -R configiwave:configiwave /app/
+ln -s /app/remote-scripts/automatio-ui /var/www/automatio-ui
+
