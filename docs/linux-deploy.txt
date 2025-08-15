@@ -8,8 +8,16 @@ useradd configiwave
 sudo mkdir -p /app/
 cd /app
 git clone https://github.com/makwetjat/devops-network.git
+# Setup virtual env
 cd /app/devops-network/automation-ui
 python3 -m venv venv       # ✅ creates the virtual environment folder named 'venv'
-source venv/bin/activate   # ✅ activates it
-sudo chown -R configiwave:configiwave /app
+source venv/bin/activate   # ✅ activates 
+pip install -r requirements.txt
+#
 ln -s /app/devops-network/automation-ui /var/www/automation-ui
+cp -p /app/devops-network/configs/automation-ui.conf /etc/httpd/conf.d/automation-ui.conf
+# Ensure Apache is enabled and running
+sudo systemctl enable httpd
+sudo systemctl start httpd
+sudo systemctl status httpd
+sudo chown -R configiwave:configiwave /app
