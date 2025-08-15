@@ -3,7 +3,7 @@
 ~] sudo dnf install git
 ~] sudo dnf install sshpass
 # Add app user
-useradd configiwave
+useradd configwave
 # Create app directory and clone repo
 sudo mkdir -p /app/
 cd /app
