@@ -1,12 +1,13 @@
 # Installations
-~] sudo  dnf install python3
-~] sudo dnf install git
-~] sudo dnf install sshpass
+sudo  dnf install python3
+sudo dnf install git
+sudo dnf install sshpass
 # Add app user
 useradd configwave
 # Create app directory and clone repo
-sudo mkdir -p /app/
+sudo mkdir -p /app/ # Only have to do it once
 cd /app
+mv devops-network devops-network_$(date +%Y%m%d_%H%M%S)
 git clone https://github.com/makwetjat/devops-network.git
 sudo chown -R configiwave:configiwave /app
 sudo chmod -R 755 /app
