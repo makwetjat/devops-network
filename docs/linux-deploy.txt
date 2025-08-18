@@ -65,7 +65,7 @@ echo 'configwave ALL=NOPASSWD:/bin/systemctl *  automation-ui*'|tee /etc/sudoers
 sudo systemctl stop automation-ui.service
 
 # rename old and clone repo
-cd /app/devops-network/automation-ui
+cd /app
 mv devops-network devops-network_$(date +%Y%m%d_%H%M%S)
 git clone https://github.com/makwetjat/devops-network.git
 chmod -R 755 /app
