@@ -57,8 +57,8 @@ Create /etc/httpd/conf.d/reverse-proxy.conf
     </Directory>
 
     ProxyPreserveHost On
-    ProxyPass /remotescripts/ http://localhost:8080/
-    ProxyPassReverse /remotescripts/ http://localhost:8080/
+    ProxyPass /remotescripts/ http://localhost:8000/
+    ProxyPassReverse /remotescripts/ http://localhost:8000/
 
     ErrorLog /var/log/httpd/autoscripts-error.log
     CustomLog /var/log/httpd/autoscripts-access.log combine
