@@ -7,14 +7,19 @@
 # Install Git and sshpass
 sudo dnf install git -y
 sudo dnf install sshpass -y 
+
 # Install Python 3.11:
 sudo dnf install python3.11
+
 # Verify the Installation:
 python3.11 --version
+
 # Install Development Tools
 sudo dnf groupinstall "Development Tools"
+
 # Install Required Dependencies:
 sudo dnf install gcc openssl-devel bzip2-devel libffi-devel
+
 # Make python3.11 default
 sudo alternatives --config python3
 
@@ -54,9 +59,9 @@ echo 'configwave ALL=NOPASSWD:/bin/systemctl *  automation-ui*'|tee /etc/sudoers
 
 <!--------------------------------------------------------------------------------------------------------------------------------------------->
 
-3. Deployment -  rename old and clone repo 
+3. Deployment -  As configwave (app user)
 
-# As configwave (app user)
+# rename old and clone repo
 mv devops-network devops-network_$(date +%Y%m%d_%H%M%S)
 git clone https://github.com/makwetjat/devops-network.git
 chmod -R 755 /app
