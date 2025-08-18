@@ -1,6 +1,6 @@
+<!-- ## ## Automation UI FastAPI Service  ## ## A ----->
+<!--
 # devops-network
-Linux automation web ui
-
 - First release - prototype testing
 ## ##########################
 ## How to commit big files ## 
@@ -19,4 +19,49 @@ git push origin main
 
 N.B - Once it’s inside the repo, Git LFS will handle it correctly — no need to keep it elsewhere
 
-# Install all required packages for new builds
+# Install all required packages for new builds as per linux-deploy.txt
+
+<!-- ## ## Automation UI FastAPI Service  ## ## A ----->
+
+
+<!---  # Load balancing # -->
+# Install Apache modules
+sudo dnf install httpd -y
+sudo systemctl enable --now httpd
+
+# Enable proxy modules
+sudo dnf install mod_proxy_html -y   # optional for HTML rewriting
+sudo sed -i '/#LoadModule proxy_module/s/^#//' /etc/httpd/conf.modules.d/00-proxy.conf
+sudo sed -i '/#LoadModule proxy_http_module/s/^#//' /etc/httpd/conf.modules.d/00-proxy.conf
+
+
+# Configure reverse proxy
+
+Create /etc/httpd/conf.d/reverse-proxy.conf
+<!-- All the web files are part of the repository -->
+
+<!-- Add this to reverse-proxy.conf: -->
+
+<VirtualHost *:80>
+    ServerName 192.168.1.100
+
+    DocumentRoot "/app/devops-network/loadbalancer"
+    <Directory "/app/devops-network/loadbalancer">
+        AllowOverride None
+        Require all granted
+    </Directory>
+
+    ProxyPreserveHost On
+    ProxyPass /remotescripts/ http://192.168.1.100:8080/
+    ProxyPassReverse /remotescripts/ http://192.168.1.100:8080/
+
+    ErrorLog /var/log/httpd/autoscripts-error.log
+    CustomLog /var/log/httpd/autoscripts-access.log combined
+</VirtualHost>
+
+# Restart Apache
+sudo systemctl restart httpd
+
+
+#
+
