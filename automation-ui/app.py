@@ -6,7 +6,7 @@ from fastapi.responses import HTMLResponse # type: ignore
 
 app = FastAPI()
 
-REMOTE_PATH = "/apps/devops-network/remote-scripts"
+REMOTE_PATH = "/app/devops-network/remote-scripts"
 SCRIPTS_PATH = f"{REMOTE_PATH}/run-remote-scripts"
 _variable_files= {
     "ansible": f"{REMOTE_PATH}/secrets/.file1",
