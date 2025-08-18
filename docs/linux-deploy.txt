@@ -8,6 +8,8 @@ useradd configwave
 sudo mkdir -p /app/
 cd /app
 git clone https://github.com/makwetjat/devops-network.git
+sudo chown -R configiwave:configiwave /app
+sudo chmod -R 755 /app
 # Setup virtual env
 cd /app/devops-network/automation-ui
 python3 -m venv venv       # ✅ creates the virtual environment folder named 'venv'
@@ -15,7 +17,6 @@ source venv/bin/activate   # ✅ activates
 pip install -r requirements.txt
 pip install --upgrade pip
 #
-sudo chown -R configiwave:configiwave /app
 
 # Create a services file - /etc/systemd/system/automation-ui.service
 

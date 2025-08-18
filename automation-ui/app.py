@@ -146,7 +146,9 @@ async def websocket_endpoint(websocket: WebSocket):
         for host in servers:
             await websocket.send_text(f"\n--- Processing {host} ---")
             scp_cmd = f"sshpass -p {shlex.quote(password)} scp -o StrictHostKeyChecking=no {shlex.quote(script_path)} {user}@{host}:/tmp/{script}"
-            ssh_cmd = f"sshpass -p {shlex.quote(password)} ssh -o StrictHostKeyChecking=no {user}@{host} sudo bash /tmp/{script}; rm -f /tmp/{script}"
+            ssh_cmd = (
+                       f"sshpass -p {shlex.quote(password)} ssh -o StrictHostKeyChecking=no {user}@{host} "
+                       f"sudo -S bash /tmp/{script} <<< {shlex.quote(password)} && sudo rm -f /tmp/{script}")
 
             await websocket.send_text(f"Copying script to {host}...")
             proc_scp = await asyncio.create_subprocess_shell(scp_cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.STDOUT)
