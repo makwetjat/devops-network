@@ -34,6 +34,8 @@ sudo dnf install mod_proxy_html -y   # optional for HTML rewriting
 sudo sed -i '/#LoadModule proxy_module/s/^#//' /etc/httpd/conf.modules.d/00-proxy.conf
 sudo sed -i '/#LoadModule proxy_http_module/s/^#//' /etc/httpd/conf.modules.d/00-proxy.conf
 
+# Remove default redhat welcome page
+sudo mv /etc/httpd/conf.d/welcome.conf /etc/httpd/conf.d/welcome.conf.bak
 
 # Configure reverse proxy
 
@@ -43,20 +45,23 @@ Create /etc/httpd/conf.d/reverse-proxy.conf
 <!-- Add this to reverse-proxy.conf: -->
 
 <VirtualHost *:80>
-    ServerName 192.168.1.100
+    ServerName opsautodeploy.configwave.co.za
+    ServerAlias 172.16.206.41
+    ServerAlias localhost
 
-    DocumentRoot "/app/devops-network/loadbalancer"
-    <Directory "/app/devops-network/loadbalancer">
+   DocumentRoot "/app/devops-network/loadbalancer"
+
+   <Directory "/app/devops-network/loadbalancer">
         AllowOverride None
         Require all granted
     </Directory>
 
     ProxyPreserveHost On
-    ProxyPass /remotescripts/ http://192.168.1.100:8080/
-    ProxyPassReverse /remotescripts/ http://192.168.1.100:8080/
+    ProxyPass /remotescripts/ http://localhost:8080/
+    ProxyPassReverse /remotescripts/ http://localhost:8080/
 
     ErrorLog /var/log/httpd/autoscripts-error.log
-    CustomLog /var/log/httpd/autoscripts-access.log combined
+    CustomLog /var/log/httpd/autoscripts-access.log combine
 </VirtualHost>
 
 # Restart Apache
