@@ -1,10 +1,13 @@
 import asyncio
 import os
 import shlex
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect # type: ignore
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request # type: ignore
 from fastapi.responses import HTMLResponse # type: ignore
+from fastapi.templating import Jinja2Templates
 
-app = FastAPI()
+templates = Jinja2Templates(directory="templates")
+
+app = FastAPI(root_path="/remotescripts")
 
 REMOTE_PATH = "/app/devops-network/remote-scripts"
 SCRIPTS_PATH = f"{REMOTE_PATH}/run-remote-scripts"
@@ -20,87 +23,9 @@ def get_password(user: str) -> str:
     with open(path, "r") as f:
         return f.readline().strip()
 
-html = """
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Run Remote Script UI</title>
-</head>
-<body>
-  <h2>Run Remote Script on Servers</h2>
-  <form id="form">
-    <label>Server names (one per line):</label><br>
-    <textarea id="servers" rows="6" cols="40"></textarea><br><br>
-
-    <label>Choose remote user:</label><br>
-    <select id="remote_user">
-      <option value="ansible">ansible</option>
-      <option value="root">root</option>
-    </select><br><br>
-
-    <label>Choose script to run:</label><br>
-    <select id="script_select"></select><br><br>
-
-    <button type="button" onclick="startRun()">Run Script</button>
-  </form>
-
-  <h3>Output:</h3>
-  <pre id="output" style="background:#222; color:#0f0; height:300px; overflow:auto;"></pre>
-
-<script>
-  async function loadScripts() {
-    const res = await fetch("/scripts");
-    const scripts = await res.json();
-    const select = document.getElementById("script_select");
-    scripts.forEach(s => {
-      let option = document.createElement("option");
-      option.value = s;
-      option.text = s;
-      select.appendChild(option);
-    });
-  }
-
-  loadScripts();
-
-  let ws;
-
-  function startRun() {
-    const servers = document.getElementById("servers").value;
-    const user = document.getElementById("remote_user").value;
-    const script = document.getElementById("script_select").value;
-
-    if(ws) {
-      ws.close();
-    }
-
-    ws = new WebSocket(`ws://${location.host}/ws`);
-
-    ws.onopen = () => {
-      ws.send(JSON.stringify({servers, user, script}));
-      document.getElementById("output").textContent = "";
-    };
-    ws.onmessage = (event) => {
-      const output = document.getElementById("output");
-      output.textContent += event.data + "\\n";
-      output.scrollTop = output.scrollHeight;
-    };
-    ws.onclose = () => {
-      const output = document.getElementById("output");
-      output.textContent += "\\nConnection closed.";
-    };
-    ws.onerror = () => {
-      const output = document.getElementById("output");
-      output.textContent += "\\nError occurred.";
-    };
-  }
-</script>
-</body>
-</html>
-"""
-
 @app.get("/")
-async def root():
-    return HTMLResponse(html)
+async def root(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request, "root_path": app.root_path})
 
 @app.get("/scripts")
 async def list_scripts():
@@ -148,7 +73,7 @@ async def websocket_endpoint(websocket: WebSocket):
             scp_cmd = f"sshpass -p {shlex.quote(password)} scp -o StrictHostKeyChecking=no {shlex.quote(script_path)} {user}@{host}:/tmp/{script}"
             ssh_cmd = (
                        f"sshpass -p {shlex.quote(password)} ssh -o StrictHostKeyChecking=no {user}@{host} "
-                       f"sudo -S bash /tmp/{script} <<< {shlex.quote(password)} && sudo rm -f /tmp/{script}")
+                       f"'sudo -S bash /tmp/{script} <<< {shlex.quote(password)} && sudo rm -f /tmp/{script}'")
 
             await websocket.send_text(f"Copying script to {host}...")
             proc_scp = await asyncio.create_subprocess_shell(scp_cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.STDOUT)
