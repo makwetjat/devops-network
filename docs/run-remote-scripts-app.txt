@@ -1,0 +1,17 @@
+3. Deployment -  As configwave (app user)
+
+# Stop services 
+sudo systemctl stop automation-ui.service
+
+# rename old and clone repo
+cd /app
+mv devops-network devops-network_$(date +%Y%m%d_%H%M%S)
+git clone https://github.com/makwetjat/devops-network.git
+chmod -R 755 /app
+
+# Setup virtual env
+cd /app/devops-network/automation-ui
+python3.11 -m venv venv       
+source venv/bin/activate 
+pip install --upgrade pip
+pip install -r requirements.txt

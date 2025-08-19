@@ -1,5 +1,5 @@
 
-<!------------------------------------DOCUMENTATION TO DEPLOY PYTHON APP AUTOMATION UI --------------------------------------------------------->
+<!------------------------------------DOCUMENTATION TO DEPLOY PYTHON APP - RUN REMOTE SCRIPTS --------------------------------------------------------->
 
 1. Requirements
 # System packages Installations -  User with root previlleges
