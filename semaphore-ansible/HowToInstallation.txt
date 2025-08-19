@@ -1,0 +1,52 @@
+# Install Dependencies
+sudo dnf install -y yum-utils device-mapper-persistent-data lvm2
+sudo dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+sudo dnf install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+sudo systemctl start docker
+sudo systemctl enable docker
+
+
+# Deploy docker containers
+
+<!-- Deploy DB container --->
+
+docker run -d --name semaphore-db \
+  --network semaphore-net \
+  -e MYSQL_ROOT_PASSWORD=RootPass123 \
+  -e MYSQL_DATABASE=semaphore \
+  -e MYSQL_USER=semaphore \
+  -e MYSQL_PASSWORD=Secr3tPass! \
+  mysql:8
+
+<!-- Wait for semaphore-db to be fully up; -->
+docker logs semaphore-db
+
+docker exec -it semaphore-db mysql -u root -p
+
+
+# Then in MySQL shell:
+CREATE DATABASE IF NOT EXISTS semaphore;
+CREATE USER 'semaphore'@'%' IDENTIFIED BY 'Secr3tPass!';
+GRANT ALL PRIVILEGES ON semaphore.* TO 'semaphore'@'%';
+FLUSH PRIVILEGES;
+
+
+<!-- Deploy DB container --->
+
+docker run --name semaphore \
+  --network semaphore-net \
+  -p 9000:3000 \
+  -e SEMAPHORE_DB_DIALECT=mysql \
+  -e SEMAPHORE_DB_HOST=semaphore-db \
+  -e SEMAPHORE_DB_PORT=3306 \
+  -e SEMAPHORE_DB_USER=semaphore \
+  -e SEMAPHORE_DB_PASS=Secr3tPass! \
+  -e SEMAPHORE_DB_NAME=semaphore \
+  -e SEMAPHORE_ADMIN=admin \
+  -e SEMAPHORE_ADMIN_PASSWORD='2021@March!@#' \
+  -d public.ecr.aws/semaphore/pro/server:v2.16.16
+
+
+docker logs semaphore
+
+
