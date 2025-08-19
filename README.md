@@ -64,6 +64,9 @@ Create /etc/httpd/conf.d/reverse-proxy.conf
     ProxyPass /remotescripts/ http://localhost:8000/
     ProxyPassReverse /remotescripts/ http://localhost:8000/
 
+    # For ansible ui
+    Redirect /ansible http://192.168.101.205:3000/
+
     ErrorLog /var/log/httpd/autoscripts-error.log
     CustomLog /var/log/httpd/autoscripts-access.log combine
 </VirtualHost>

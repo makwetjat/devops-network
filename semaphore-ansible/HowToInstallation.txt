@@ -67,4 +67,8 @@ docker run --name semaphore \
 
 docker logs semaphore
 
+##
 
+Add redirect to revers proxy http.conf file running apache
+
+Redirect /ansible http://192.168.101.205:3000/
