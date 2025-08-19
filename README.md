@@ -33,6 +33,7 @@ sudo systemctl enable --now httpd
 sudo dnf install mod_proxy_html -y   # optional for HTML rewriting
 sudo sed -i '/#LoadModule proxy_module/s/^#//' /etc/httpd/conf.modules.d/00-proxy.conf
 sudo sed -i '/#LoadModule proxy_http_module/s/^#//' /etc/httpd/conf.modules.d/00-proxy.conf
+sudo sed -i '/#LoadModule proxy_wstunnel_module /s/^#//' /etc/httpd/conf.modules.d/00-proxy.conf
 
 # Remove default redhat welcome page
 sudo mv /etc/httpd/conf.d/welcome.conf /etc/httpd/conf.d/welcome.conf.bak
@@ -58,6 +59,8 @@ Create /etc/httpd/conf.d/reverse-proxy.conf
     </Directory>
 
     ProxyPreserveHost On
+    ProxyPass "/remotescripts/ws" "ws://localhost:8000/ws"
+    ProxyPassReverse "/remotescripts/ws" "ws://localhost:8000/ws"
     ProxyPass /remotescripts/ http://localhost:8000/
     ProxyPassReverse /remotescripts/ http://localhost:8000/
 
