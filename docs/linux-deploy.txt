@@ -55,8 +55,8 @@ sudo mkdir -p /app/
 sudo chown -R configiwave:configiwave /app
 
 # Give the user rights to run the service
-echo 'configwave ALL=NOPASSWD:/bin/systemctl *  automation-ui*'|tee /etc/sudoers.d/configwave
-echo 'configwave ALL=NOPASSWD:/bin/systemctl *  httpd*'|tee /etc/sudoers.d/configwave
+echo 'configwave ALL=NOPASSWD:/bin/systemctl *  automation-ui*'|tee -a /etc/sudoers.d/configwave
+echo 'configwave ALL=NOPASSWD:/bin/systemctl *  httpd*'|tee -a /etc/sudoers.d/configwave
 
 <!--------------------------------------------------------------------------------------------------------------------------------------------->
 
@@ -109,3 +109,8 @@ sudo systemctl start automation-ui.service
 sudo systemctl status automation-ui.service
 
 <!--------------------------------------------------------------------------------------------------------------------------------------------->
+
+To do an install in an already running Environment
+cd /app/
+source venv/bin/activate
+pip install jinja

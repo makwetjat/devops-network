@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>RUN REMOTE Script UI</title>
+</head>
+<body>
+  <h2>Run Remote Script on Servers</h2>
+  <form id="form">
+    <label>Server names (one per line):</label><br>
+    <textarea id="servers" rows="6" cols="40"></textarea><br><br>
+
+    <label>Choose remote user:</label><br>
+    <select id="remote_user">
+      <option value="ansible">ansible</option>
+      <option value="root">root</option>
+    </select><br><br>
+
+    <label>Choose script to run:</label><br>
+    <select id="script_select"></select><br><br>
+
+    <button type="button" onclick="startRun()">Run Script</button>
+  </form>
+
+  <h3>Output:</h3>
+  <pre id="output" style="background:#222; color:#0f0; height:300px; overflow:auto;"></pre>
+
+<script>
+  async function loadScripts() {
+    const res = await fetch("{{ root_path }}/scripts");
+    const scripts = await res.json();
+    const select = document.getElementById("script_select");
+    scripts.forEach(s => {
+      let option = document.createElement("option");
+      option.value = s;
+      option.text = s;
+      select.appendChild(option);
+    });
+  }
+
+  loadScripts();
+
+  let ws;
+
+  function startRun() {
+    const servers = document.getElementById("servers").value;
+    const user = document.getElementById("remote_user").value;
+    const script = document.getElementById("script_select").value;
+
+    if(ws) {
+      ws.close();
+    }
+
+    ws = new WebSocket(`ws://${location.host}{{ root_path }}/ws`);
+
+    ws.onopen = () => {
+      ws.send(JSON.stringify({servers: servers, user: user, script: script}));
+      document.getElementById("output").textContent = "";
+    };
+    ws.onmessage = (event) => {
+      const output = document.getElementById("output");
+      output.textContent += event.data + "\n";
+      output.scrollTop = output.scrollHeight;
+    };
+    ws.onclose = () => {
+      const output = document.getElementById("output");
+      output.textContent += "\nConnection closed.";
+    };
+    ws.onerror = () => {
+      const output = document.getElementById("output");
+      output.textContent += "\nError occurred.";
+    };
+  }
+</script>
+</body>
+</html>
