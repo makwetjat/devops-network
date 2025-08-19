@@ -46,6 +46,7 @@ Create /etc/httpd/conf.d/reverse-proxy.conf
 
 <VirtualHost *:80>
     ServerName opsautodeploy.configwave.co.za
+    ServerAlias 192.168.101.207
     ServerAlias 172.16.206.41
     ServerAlias localhost
 
