@@ -33,6 +33,22 @@ FLUSH PRIVILEGES;
 
 <!-- Deploy DB container --->
 
+<!-- Semaphore Community Edition (FREE) -->
+
+docker run --name semaphore \
+  --network semaphore-net \
+  -p 3000:3000 \
+  -e SEMAPHORE_DB_DIALECT=mysql \
+  -e SEMAPHORE_DB_HOST=semaphore-db \
+  -e SEMAPHORE_DB_USER=semaphore \
+  -e SEMAPHORE_DB_PASSWORD='Secr3tPass!' \
+  -e SEMAPHORE_DB_NAME=semaphore \
+  -e SEMAPHORE_ADMIN=admin \
+  -e SEMAPHORE_ADMIN_PASSWORD='2021@March!@#' \
+  -d semaphoreui/semaphore:latest
+
+<!-- Semaphore Pro / Enterprise Edition: -->
+
 docker run --name semaphore \
   --network semaphore-net \
   -p 9000:3000 \
