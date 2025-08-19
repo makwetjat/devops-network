@@ -24,7 +24,7 @@ N.B - Once it’s inside the repo, Git LFS will handle it correctly — no need 
 <!-- ## ## Automation UI FastAPI Service  ## ## A ----->
 
 
-<!---  # Load balancing # -->
+<!---  # Load balancing 
 # Install Apache modules
 sudo dnf install httpd -y
 sudo systemctl enable --now httpd
@@ -41,9 +41,9 @@ sudo mv /etc/httpd/conf.d/welcome.conf /etc/httpd/conf.d/welcome.conf.bak
 # Configure reverse proxy
 
 Create /etc/httpd/conf.d/reverse-proxy.conf
-<!-- All the web files are part of the repository -->
+<> All the web files are part of the repository
 
-<!-- Add this to reverse-proxy.conf: -->
+ Add this to reverse-proxy.conf:
 
 <VirtualHost *:80>
     ServerName opsautodeploy.configwave.co.za
@@ -70,7 +70,7 @@ Create /etc/httpd/conf.d/reverse-proxy.conf
 
 # Restart Apache
 sudo systemctl restart httpd
-
+-->
 
 #
 
