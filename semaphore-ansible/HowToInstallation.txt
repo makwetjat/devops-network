@@ -34,7 +34,7 @@ GRANT ALL PRIVILEGES ON semaphore.* TO 'semaphore'@'%';
 FLUSH PRIVILEGES;
 
 
-<!-- Deploy DB container --->
+<!-- Deploy Ansible-UI container --->
 
 <!-- Semaphore Community Edition (FREE) -->
 
