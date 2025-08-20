@@ -63,9 +63,13 @@ Create /etc/httpd/conf.d/reverse-proxy.conf
     ProxyPassReverse "/remotescripts/ws" "ws://localhost:8000/ws"
     ProxyPass /remotescripts/ http://localhost:8000/
     ProxyPassReverse /remotescripts/ http://localhost:8000/
+    # For ansible ui running on the same host running httpd
+    ProxyPass /ansible/ http://localhost:3000/
+    ProxyPassReverse /ansibles/ http://localhost:3000/
+    
 
-    # For ansible ui
-    Redirect /ansible http://192.168.101.205:3000/
+    # For ansible ui - External to the host running httpd
+    # Redirect /ansible http://192.168.101.205:3000/
 
     ErrorLog /var/log/httpd/autoscripts-error.log
     CustomLog /var/log/httpd/autoscripts-access.log combine
