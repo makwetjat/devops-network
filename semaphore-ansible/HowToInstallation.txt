@@ -8,7 +8,10 @@ sudo systemctl enable docker
 
 # Deploy docker containers
 
+
 <!-- Deploy DB container --->
+
+docker network create semaphore-net
 
 docker run -d --name semaphore-db \
   --network semaphore-net \
