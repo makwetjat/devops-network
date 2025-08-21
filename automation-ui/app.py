@@ -4,6 +4,8 @@ import shlex
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request # type: ignore
 from fastapi.responses import HTMLResponse # type: ignore
 from fastapi.templating import Jinja2Templates
+from fastapi.responses import FileResponse
+
 
 templates = Jinja2Templates(directory="templates")
 
@@ -22,6 +24,13 @@ def get_password(user: str) -> str:
         raise FileNotFoundError(f"Password file for user '{user}' not found")
     with open(path, "r") as f:
         return f.readline().strip()
+
+@app.get("/image/{filename}")
+async def get_image(filename: str):
+    file_path = os.path.join("/app/devops-network/remote-scripts/image", filename)
+    if os.path.isfile(file_path):
+        return FileResponse(file_path)
+    return {"error": "Image not found"}
 
 @app.get("/")
 async def root(request: Request):
