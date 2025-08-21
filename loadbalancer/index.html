@@ -4,88 +4,35 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Automation UI</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f7f6;
-      margin: 0;
-      padding: 0;
-      color: #333;
-    }
-
-    .header {
-      background-color: #3498db;
-      padding: 20px;
-      color: white;
-      text-align: center;
-    }
-
-    h2 {
-      color: #4CAF50;
-      text-align: center;
-      margin-top: 40px;
-    }
-
-    .container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-wrap: wrap;
-      padding: 20px;
-    }
-
-    .button {
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      padding: 15px 32px;
-      text-align: center;
-      text-decoration: none;
-      font-size: 16px;
-      margin: 10px;
-      cursor: pointer;
-      border-radius: 5px;
-      transition: background-color 0.3s ease;
-    }
-
-    .button:hover {
-      background-color: #45a049;
-    }
-
-    .footer {
-      background-color: #3498db;
-      padding: 10px;
-      color: white;
-      text-align: center;
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-    }
-  </style>
+  <link rel="stylesheet" href="../style/style.css">
 </head>
 <body>
-  <div class="header">
-    <h1>Automation for Linux Sys Admin</h1>    
-  </div>
+  <div class="main-container">
+    <div class="card">
+      <div class="header">
+        <h1>Platform Operations & Automation Center</h1>
+      </div>
 
-  <h2>Select a Category</h2>
-  <div class="container">
-    <form action="http://ansible.configwave.co.za/" target="_blank">
-      <button type="submit" class="button">ANSIBLE AUTOMATION</button>
-    </form>
-    <form action="/remotescripts/" target="_blank">
-      <button type="submit" class="button">RUN REMOTE SCRIPTS</button>
-    </form>
-    <form action="/remotescripts/" target="_blank">
-      <button type="submit" class="button">USER ADMIN</button>
-    </form>
-    <form action="/remotescripts/" target="_blank">
-      <button type="submit" class="button">SYSTEM ADMIN</button>
-    </form>
+      <h2>Select a Category</h2>
+      <div class="button-grid">
+        <form action="http://ansible.configwave.co.za/" target="_blank">
+          <button type="submit" class="button">Automation Hub</button>
+        </form>
+        <form action="/remotescripts/" target="_blank">
+          <button type="submit" class="button">Command Hub</button>
+        </form>
+        <form action="/remotescripts/" target="_blank">
+          <button type="submit" class="button">Accounts Hub</button>
+        </form>
+        <form action="/remotescripts/" target="_blank">
+          <button type="submit" class="button">Management Hub</button>
+        </form>
+      </div>
+    </div>
   </div>
 
   <div class="footer">
-    <p>&copy; 2025 Thoka Makwetja</p>
+    &copy; 2025 Thoka Makwetja (Work In Progress)
   </div>
 </body>
 </html>
