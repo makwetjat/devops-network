@@ -45,10 +45,12 @@ Create /etc/httpd/conf.d/reverse-proxy.conf
 
  Add this to reverse-proxy.conf:
 
+[root@opsautodeploy ~]# cat /etc/httpd/conf.d/reverse-proxy.conf
 <VirtualHost *:80>
     ServerName opsautodeploy.configwave.co.za
     ServerAlias 192.168.101.207
-    ServerAlias 172.16.206.41
+    ServerAlias 192.168.188.90
+    ServerAlias 172.16.206.46
     ServerAlias localhost
 
    DocumentRoot "/app/devops-network/loadbalancer"
@@ -59,21 +61,76 @@ Create /etc/httpd/conf.d/reverse-proxy.conf
     </Directory>
 
     ProxyPreserveHost On
+    # Forward WebSocket
     ProxyPass "/remotescripts/ws" "ws://localhost:8000/ws"
     ProxyPassReverse "/remotescripts/ws" "ws://localhost:8000/ws"
+    # Forward main app
     ProxyPass /remotescripts/ http://localhost:8000/
     ProxyPassReverse /remotescripts/ http://localhost:8000/
-    # For ansible ui running on the same host running httpd
-    ProxyPass /ansible/ http://localhost:3000/
-    ProxyPassReverse /ansibles/ http://localhost:3000/
-    
-
-    # For ansible ui - External to the host running httpd
-    # Redirect /ansible http://192.168.101.205:3000/
 
     ErrorLog /var/log/httpd/autoscripts-error.log
     CustomLog /var/log/httpd/autoscripts-access.log combine
 </VirtualHost>
+
+# Ansible UI
+
+# Semaph
+<VirtualHost *:80>
+    ServerName ansible.configwave.co.za
+    ServerAlias 192.168.101.207
+    ServerAlias 192.168.188.90
+    ServerAlias 172.16.206.46
+    ServerAlias localhost
+
+    ProxyPass / http://localhost:3000/
+    ProxyPassReverse / http://localhost:3000/
+
+    ErrorLog /var/log/httpd/semaphore-error.log
+    CustomLog /var/log/httpd/semaphore-access.log combined
+</VirtualHost>
+
+# Account hub
+<VirtualHost *:80>
+    ServerName accounts-hub.configwave.co.za
+    ServerAlias 192.168.101.207
+    ServerAlias 192.168.188.90
+    ServerAlias 172.16.206.46
+    ServerAlias localhost
+
+    ProxyPreserveHost On
+    # Forward WebSocket
+    ProxyPass "/accountshub/ws" "ws://localhost:8001/ws"
+    ProxyPassReverse "/accountshub/ws" "ws://localhost:8001/ws"
+    # Forward main app
+    ProxyPass /accountshub/ http://localhost:8001/
+    ProxyPassReverse /accountshub/ http://localhost:8001/
+
+
+    #ProxyPass / http://localhost:8001/
+    #ProxyPassReverse / http://localhost:8001/
+
+</VirtualHost>
+
+
+<VirtualHost *:80>
+    ServerName ansible-hub.configwave.co.za
+    ServerAlias 192.168.101.207
+    ServerAlias 192.168.188.90
+    ServerAlias 172.16.206.46
+    ServerAlias localhost
+
+    ProxyPreserveHost On
+    # Forward WebSocket
+    ProxyPass "/ansiblehub/ws" "ws://localhost:8002/ws"
+    ProxyPassReverse "/ansiblehub/ws" "ws://localhost:8002/ws"
+    # Forward main app
+    ProxyPass /ansiblehub/ http://localhost:8002/
+    ProxyPassReverse /ansiblehub/ http://localhost:8002/
+
+
+</VirtualHost>
+[root@opsautodeploy ~]#
+
 
 # Restart Apache
 sudo systemctl restart httpd
